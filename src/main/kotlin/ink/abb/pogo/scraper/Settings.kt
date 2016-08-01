@@ -12,6 +12,7 @@ import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId
 import com.pokegoapi.api.inventory.Pokeball
 import ink.abb.pogo.scraper.util.Log
 import java.io.BufferedReader
+import java.io.File
 import java.io.FileOutputStream
 import java.io.FileReader
 import java.util.*
@@ -61,6 +62,19 @@ class Settings(val properties: Properties) {
                 Pair(ItemId.ITEM_MASTER_BALL, 10),
                 Pair(ItemId.ITEM_RAZZ_BERRY, 50)
         )
+    }
+
+    val candyRequiredByPokemon = getCandyByPokemon()
+
+    val autoEvolve = getPropertyIfSet("list of pokemon you want to evolve when able to", "auto_evolve", "CATERPIE,PIDGEY,WEEDLE", String::toString).split(",")
+
+    //This method only exists because I wasn't sure if this data was stored somewhere else. If it is then this can be removed.
+    private fun getCandyByPokemon(): Map<Int, Int> {
+            val lines = File("pokemon-candy.csv").readLines()
+            return lines.map {
+                    val split = it.split(",")
+                    Pair(split[0].toInt(), split[1].toInt())
+            }.toMap()
     }
 
     val randomNextPokestop = getPropertyIfSet("Number of pokestops to select next", "random_next_pokestop_selection", 5, String::toInt)
